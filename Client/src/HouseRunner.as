@@ -176,7 +176,8 @@ package
 		{
 			var msg:String = p.toJson();
 			var msgLen:uint = getStringLengthInByte( msg, "utf-8" );
-			//soc.writeUnsignedInt( msgLen );
+			trace("Send to Server:", msg, "Len:", msgLen );
+			soc.writeUnsignedInt( msgLen );
 			soc.writeMultiByte( msg, "utf-8" );
 			soc.flush();
 		}

@@ -13,6 +13,7 @@ s.listen( 5 )
 inputs = [s]
 idx = 0
 men = {}
+pLen = {}
 
 def updateAll():
     allPos = {}
@@ -31,6 +32,22 @@ def updateAll():
             except socket.error:
                 print c.getpeername(), 'Got Problem.'
 
+def removeClient( r ):
+    print r.getpeername(), 'disconnected'
+    inputs.remove(r)
+    men.pop(r.getpeername())
+    pLen.pop(r.getpeername())
+
+def handlePacket( data ):
+    print "==============\nrecieved data from", r.getpeername(), data
+    data = json.loads( data )
+    if data['cmd'] == 'init':
+        pass
+    elif data['cmd'] == 'move':
+        men[r.getpeername()]['x'] = data['param']['x']
+        men[r.getpeername()]['y'] = data['param']['y']
+    updateAll()
+
 while True:
     rs, ws, es = select.select( inputs, [], [] )
     for r in rs:
@@ -40,25 +57,24 @@ while True:
             inputs.append( c )
             print 'New socket', c.getpeername()
             men[c.getpeername()] = {'id':idx, 'x':random.randint(100,300), 'y':random.randint(100,300)}
+            pLen[c.getpeername()] = 0
             idx += 1
         else:
-            try:
-                data = r.recv( 1024 )
-                disconnected = not data
-            except socket.error:
-                disconnected = True
+            data = 1
+            while data:
+                if pLen[r.getpeername()] == 0:
+                    data = r.recv(4)
+                    if not data:
+                        removeClient( r )
+                        break
+                    else:
+                        pLen[r.getpeername()] = int(struct.unpack("!I",data)[0])
+                else:
+                    data = r.recv(pLen[r.getpeername()])
+                    if not data:
+                        break
+                    else:
+                        handlePacket( data )
+                        pLen[r.getpeername()] = 0
 
-            if disconnected:
-                print r.getpeername(), 'disconnected'
-                inputs.remove( r )
-                men.pop(r.getpeername())
-            else:
-                data = json.loads( data )
-                print "==============\nrecieved data from", r.getpeername(), data
-                if data['cmd'] == 'init':
-                    pass
-                elif data['cmd'] == 'move':
-                    men[r.getpeername()]['x'] = data['param']['x']
-                    men[r.getpeername()]['y'] = data['param']['y']
-                updateAll()
 s.close()
