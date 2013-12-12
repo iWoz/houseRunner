@@ -1,10 +1,11 @@
 import socket, select
 import json
 import random
+import struct
 
 s = socket.socket()
 
-host = '192.168.3.104'
+host = '10.253.58.57'
 port = 1201
 s.bind( (host, port) )
 
@@ -23,7 +24,10 @@ def updateAll():
             pass
         else:
             try:
-                cs.send(json.dumps(data))
+                smsg = json.dumps(data)
+                cs.send(struct.pack('I',len(smsg)))
+                cs.send(smsg)
+                print '\nsend: ', smsg, "len:", len(smsg), "to", c.getpeername()
             except socket.error:
                 print c.getpeername(), 'Got Problem.'
 
@@ -50,7 +54,7 @@ while True:
                 men.pop(r.getpeername())
             else:
                 data = json.loads( data )
-                print( data )
+                print "==============\nrecieved data from", r.getpeername(), data
                 if data['cmd'] == 'init':
                     pass
                 elif data['cmd'] == 'move':
