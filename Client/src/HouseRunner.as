@@ -18,6 +18,7 @@ package
 		private var soc:Socket;
 		private var list:Dictionary = new Dictionary;
 		private var ownIdx:int = -1;
+		private var pLen:uint = 0;
 		
 		public function HouseRunner()
 		{
@@ -41,14 +42,45 @@ package
 			soc.addEventListener(ProgressEvent.SOCKET_DATA, function( evt:ProgressEvent ):void
 			{
 				trace( "Data Recieved!!!", soc.bytesAvailable );
-				while( soc.bytesAvailable )
+				while( soc.bytesAvailable && soc.bytesAvailable >= pLen )
 				{
-					var a:String = soc.readUTFBytes( soc.bytesAvailable );
-					var data:Object = JSON.parse( a );
-					trace( a, data )
-					if( data.hasOwnProperty("cmd") && data.cmd == "update" )
+					//若没有下一个包需要的长度，则从socket里面读取看是否有包存在，若满足，则读取并设置包长
+					if( pLen == 0 )
 					{
-						onUpdate( data.param );
+						if( soc.bytesAvailable > 4 )
+						{
+							pLen = soc.readUnsignedByte();
+							trace("Got pLen:", pLen)
+						}
+						else
+						{
+							//此时退出循环，避免无限循环
+							break;
+						}
+					}
+						//若有下一个需要读取的包，则看socket缓存中是否满足这个包的长度，若满足则读取并解析包，若不满足则继续等待
+					else
+					{
+						//trace( soc.bytesAvailable );
+						var newPacket:ByteArray = new ByteArray();
+						trace(newPacket.endian);
+						soc.readBytes( newPacket, 0, pLen );
+						var data : String  = newPacket.readMultiByte( pLen, "utf-8" ) ; 
+						newPacket.clear();
+						var jsonData:Object = JSON.parse(data);
+						trace( data );
+						if (jsonData && jsonData.hasOwnProperty("cmd"))
+						{ 
+							switch( jsonData["cmd"] )
+							{
+								case "update":
+									onUpdate( jsonData["param"] );
+									break;
+								default:
+									break;
+							}
+						}
+						pLen = 0;
 					}
 				}
 			});
@@ -95,19 +127,11 @@ package
 				}
 			});
 			
-			var a:Function = str;
-			trace( a( "This works!!!" ) );
-			
 			/**
 			 * 1.包的发放和解析规则
 			 * 2.获取所有人的位置
 			 * 3.在本机器上移动，在另一台机器上看到同步移动
 			 * */
-		}
-		
-		private function str( a:String ):void
-		{
-			trace( a );
 		}
 		
 		private function createMan():Shape
@@ -121,7 +145,7 @@ package
 		
 		private function onUpdate( data:Object ):void
 		{
-			trace(">>>onUpdate")
+			trace(">>>onUpdate", soc.endian);
 			var man:Object;
 			for ( var manKey:String in data )
 			{
