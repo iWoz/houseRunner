@@ -49,8 +49,7 @@ package
 					{
 						if( soc.bytesAvailable > 4 )
 						{
-							pLen = soc.readByte();
-							soc.readBytes( new ByteArray(), 0, 3 );
+							pLen = soc.readUnsignedByte();
 							trace("Got pLen:", pLen)
 						}
 						else
@@ -62,12 +61,14 @@ package
 						//若有下一个需要读取的包，则看socket缓存中是否满足这个包的长度，若满足则读取并解析包，若不满足则继续等待
 					else
 					{
-						trace( soc.bytesAvailable );
+						//trace( soc.bytesAvailable );
 						var newPacket:ByteArray = new ByteArray();
+						trace(newPacket.endian);
 						soc.readBytes( newPacket, 0, pLen );
 						var data : String  = newPacket.readMultiByte( pLen, "utf-8" ) ; 
 						newPacket.clear();
 						var jsonData:Object = JSON.parse(data);
+						trace( data );
 						if (jsonData && jsonData.hasOwnProperty("cmd"))
 						{ 
 							switch( jsonData["cmd"] )
@@ -84,7 +85,7 @@ package
 				}
 			});
 			
-			soc.connect( "10.253.58.57", 1201 );
+			soc.connect( "192.168.3.104", 1201 );
 			
 			var house:Shape = new Shape();
 			house.graphics.lineStyle( 1 );
@@ -144,7 +145,7 @@ package
 		
 		private function onUpdate( data:Object ):void
 		{
-			trace(">>>onUpdate")
+			trace(">>>onUpdate", soc.endian);
 			var man:Object;
 			for ( var manKey:String in data )
 			{

@@ -5,7 +5,7 @@ import struct
 
 s = socket.socket()
 
-host = '10.253.58.57'
+host = '192.168.3.104'
 port = 1201
 s.bind( (host, port) )
 
@@ -25,7 +25,7 @@ def updateAll():
         else:
             try:
                 smsg = json.dumps(data)
-                cs.send(struct.pack('I',len(smsg)))
+                cs.send(struct.pack('!I',len(smsg)))
                 cs.send(smsg)
                 print '\nsend: ', smsg, "len:", len(smsg), "to", c.getpeername()
             except socket.error:
