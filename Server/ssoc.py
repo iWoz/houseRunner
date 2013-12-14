@@ -33,19 +33,19 @@ def updateAll():
                 print c.getpeername(), 'Got Problem.'
 
 def removeClient( r ):
-    print r.getpeername(), 'disconnected'
+    print r.getpeername(), 'disconnected!!!'
     inputs.remove(r)
     men.pop(r.getpeername())
     pLen.pop(r.getpeername())
 
-def handlePacket( data ):
-    print "==============\nrecieved data from", r.getpeername(), data
+def handlePacket( cl, data ):
+    print "==============\nrecieved data from", cl.getpeername(), data
     data = json.loads( data )
     if data['cmd'] == 'init':
         pass
     elif data['cmd'] == 'move':
-        men[r.getpeername()]['x'] = data['param']['x']
-        men[r.getpeername()]['y'] = data['param']['y']
+        men[cl.getpeername()]['x'] = data['param']['x']
+        men[cl.getpeername()]['y'] = data['param']['y']
     updateAll()
 
 while True:
@@ -53,28 +53,41 @@ while True:
     for r in rs:
         if r is s:
             c, addr = s.accept()
+            c.setblocking(0)
             print 'Got connection from', addr
             inputs.append( c )
             print 'New socket', c.getpeername()
             men[c.getpeername()] = {'id':idx, 'x':random.randint(100,300), 'y':random.randint(100,300)}
-            pLen[c.getpeername()] = 0
             idx += 1
+            pLen[c.getpeername()] = 0
         else:
-            data = 1
-            while data:
+            while True:
+                print "Handling ", r.getpeername(), "pLen = ", pLen[r.getpeername()]
                 if pLen[r.getpeername()] == 0:
-                    data = r.recv(4)
-                    if not data:
-                        removeClient( r )
+                    try:
+                        data = r.recv(4)
+                        print "pLen = 0 data = ", data, "data len:", len(data)
+                        if not data:
+                            print "break in no data len."
+                            removeClient( r )
+                            break
+                        else:
+                            pLen[r.getpeername()] = int(struct.unpack("!I",data)[0])
+                    except socket.error:
+                        print "break in no data len."
                         break
-                    else:
-                        pLen[r.getpeername()] = int(struct.unpack("!I",data)[0])
                 else:
-                    data = r.recv(pLen[r.getpeername()])
-                    if not data:
+                    try:
+                        data = r.recv(pLen[r.getpeername()])
+                        print "pLen = ", pLen[r.getpeername()], " data = ",data
+                        if not data:
+                            print "break in no data received."
+                            break
+                        else:
+                            handlePacket( r, data )
+                            pLen[r.getpeername()] = 0
+                    except socket.error:
+                        print "break in no data received."
                         break
-                    else:
-                        handlePacket( data )
-                        pLen[r.getpeername()] = 0
 
 s.close()
