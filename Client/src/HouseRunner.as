@@ -107,19 +107,19 @@ package
 				var self:Shape = list[ownIdx];
 				if( evt.keyCode == Keyboard.DOWN )
 				{
-					sendPacket( new Packet( "move", {x:self.x, y:++self.y} ) )
+					sendPacket( new Packet( "move", {x:self.x, y:self.y+2} ) )
 				}
 				else if( evt.keyCode == Keyboard.UP )
 				{
-					sendPacket( new Packet( "move", {x:self.x, y:--self.y} ) )
+					sendPacket( new Packet( "move", {x:self.x, y:self.y-2} ) )
 				}
 				else if( evt.keyCode == Keyboard.LEFT )
 				{
-					sendPacket( new Packet( "move", {x:--self.x, y:self.y} ) )
+					sendPacket( new Packet( "move", {x:self.x-2, y:self.y} ) )
 				}
 				else if( evt.keyCode == Keyboard.RIGHT )
 				{
-					sendPacket( new Packet( "move", {x:++self.x, y:self.y} ) )
+					sendPacket( new Packet( "move", {x:self.x+2, y:self.y} ) )
 				}
 				else if( evt.keyCode == Keyboard.ESCAPE )
 				{
@@ -176,7 +176,8 @@ package
 		{
 			var msg:String = p.toJson();
 			var msgLen:uint = getStringLengthInByte( msg, "utf-8" );
-			//soc.writeUnsignedInt( msgLen );
+			trace("Send to Server:", msg, "Len:", msgLen );
+			soc.writeUnsignedInt( msgLen );
 			soc.writeMultiByte( msg, "utf-8" );
 			soc.flush();
 		}
