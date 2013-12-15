@@ -5,7 +5,7 @@ import struct
 
 s = socket.socket()
 
-host = '192.168.3.104'
+host = '192.168.3.100'
 port = 1201
 s.bind( (host, port) )
 
