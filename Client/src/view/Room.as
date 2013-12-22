@@ -1,15 +1,15 @@
 package view
 {
-	import flash.display.Shape;
-	import flash.display.Sprite;
-	import flash.events.KeyboardEvent;
-	import flash.geom.Point;
-	import flash.ui.Keyboard;
-	
-	import ctrl.CmdParser;
 	import ctrl.CmdSender;
 	
 	import data.SocketMng;
+	
+	import flash.display.Shape;
+	import flash.display.Sprite;
+	import flash.events.KeyboardEvent;
+	import flash.events.MouseEvent;
+	import flash.geom.Point;
+	import flash.ui.Keyboard;
 	
 	public class Room extends Sprite
 	{
@@ -35,7 +35,7 @@ package view
 			
 			players = {};
 			
-			GameView.getInstance().stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyBoard);
+			GameView.getInstance().stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyBoard, true, 999 );
 		}
 		
 		private function handleKeyBoard( e:KeyboardEvent ):void
@@ -46,7 +46,7 @@ package view
 				return;
 			}
 			var delta:uint = 3;
-			trace( e.keyCode );
+			trace( e.keyCode, e.type );
 			switch( e.keyCode )
 			{
 				case Keyboard.ESCAPE:
@@ -81,7 +81,7 @@ package view
 				{
 					players[pid] = createRole( pid );
 				}
-				frame:addChild( players[pid] );
+				frame.addChild( players[pid] );
 				players[pid].x = data[id]['x'];
 				players[pid].y = data[id]['y'];
 			}
@@ -96,7 +96,7 @@ package view
 			}
 			else
 			{
-				r.graphics.beginFill( 0 );
+				r.graphics.beginFill( 0x0000ff );
 			}
 			r.graphics.drawCircle( 0, 0, 3 );
 			r.graphics.endFill();

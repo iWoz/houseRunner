@@ -15,7 +15,7 @@ package data
 		private static var inst:SocketMng;
 		
 		public var ip:String = "192.168.3.104";
-		public var port:uint = 3000;
+		public var port:uint = 1234;
 		public var id:uint = 0;
 		
 		private var soc:Socket;
