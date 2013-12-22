@@ -100,7 +100,7 @@ class Packet:
 server = socket.socket()
 
 host = '192.168.3.104'
-port = 3000
+port = 1234
 server.bind( (host, port) )
 
 server.listen( 5 )
@@ -158,6 +158,7 @@ def createRoom( param ):
 	roomid = roomid + 1
 	p.createRoom( r )
 	r.broadcastAllPlayerPos()
+	broadcastRoomList()
 
 def joinRoom( param ):
 	r = rooms[param['rid']]
@@ -168,7 +169,10 @@ def joinRoom( param ):
 		r.broadcastAllPlayerPos()
 
 def exitRoom( param ):
-	pass
+	r = rooms[param['rid']]
+	if r:
+		p = players[param['pid']]
+		r.removePlayer( param['pid'] )
 
 def move( param ):
 	p = players[param['pid']]
