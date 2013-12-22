@@ -3,7 +3,6 @@ package view
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.KeyboardEvent;
-	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.ui.Keyboard;
 	
@@ -97,7 +96,7 @@ package view
 			var r:Shape = new Shape;
 			if( id == SocketMng.getInstance().id )
 			{
-				r.graphics.beginFill( 0x00ff00 );
+				r.graphics.beginFill( 0xff0000 );
 			}
 			else
 			{
@@ -116,6 +115,16 @@ package view
 				players[pid].parent.removeChild( players[pid] );
 				players[pid] = null;
 			}
+		}
+		
+		public function enableKeyBoard():void
+		{
+			GameView.getInstance().stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyBoard, true, 999 );
+		}
+		
+		public function disableKeyBoard():void
+		{
+			GameView.getInstance().stage.removeEventListener(KeyboardEvent.KEY_DOWN, handleKeyBoard, true );
 		}
 		
 	}

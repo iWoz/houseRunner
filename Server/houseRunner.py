@@ -172,6 +172,7 @@ def joinRoom( param ):
 		r.addPlayer( param['pid'], p )
 		p.createRoom( r )
 		r.broadcastAllPlayerPos()
+		broadcastRoomList()
 
 def exitRoom( param ):
 	r = rooms[param['rid']]

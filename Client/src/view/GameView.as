@@ -126,11 +126,13 @@ package view
 			room.y = (roomLayer.height - room.height) * 0.5
 			roomLayer.addChild( room );
 			roomLayer.visible = true;
+			room.enableKeyBoard();
 		}
 		
 		public function exitRoom():void
 		{
 			roomLayer.visible = false;
+			room.disableKeyBoard();
 		}
 		
 		private function onSaveSetting( e:MouseEvent ):void
