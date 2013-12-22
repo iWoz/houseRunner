@@ -15,6 +15,8 @@ class Room:
 		self.players = {}
 
 	def broadcastAllPlayer( self, packet ):
+		if len(self.players) == 0:
+			return
 		for pid in self.players:
 			self.players[pid].sendPacket( packet )
 
@@ -51,10 +53,15 @@ class Room:
 		#set random pos for new player
 		player.setPos( random.randint(0,self.width), random.randint(0,self.height) )
 
-	def removePlayer( self, id ):
-		p = self.players.pop( id, None )
+	def removePlayer( self, pid ):
+		p = self.players.pop( pid, None )
 		if p:
 			p.room = None
+			param = {'pid':pid}
+			packet = Packet( 'playerExit', param )
+			self.broadcastAllPlayer( packet )
+
+
 
 class Player:
 	def __init__( self, id, soc ):
@@ -140,8 +147,6 @@ def handlePacket( cl, data ):
     	move( data['param'] )
 
 def broadcastRoomList():
-	if len(rooms) == 0:
-		return
 	param = {}
 	for rid in rooms:
 		r = rooms[rid]
@@ -173,6 +178,10 @@ def exitRoom( param ):
 	if r:
 		p = players[param['pid']]
 		r.removePlayer( param['pid'] )
+		if r.getPlayerNum == 0:
+			rooms.pop( param['rid'], None )
+			r = None
+		broadcastRoomList()
 
 def move( param ):
 	p = players[param['pid']]

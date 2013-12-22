@@ -1,5 +1,10 @@
 package view
 {
+	import flash.display.Sprite;
+	import flash.display.Stage;
+	import flash.events.MouseEvent;
+	import flash.geom.Point;
+	
 	import ctrl.CmdSender;
 	
 	import data.RoomData;
@@ -8,12 +13,6 @@ package view
 	
 	import fl.controls.Button;
 	import fl.events.ListEvent;
-	
-	import flash.display.Sprite;
-	import flash.display.Stage;
-	import flash.events.KeyboardEvent;
-	import flash.events.MouseEvent;
-	import flash.geom.Point;
 
 	public class GameView
 	{
@@ -119,14 +118,19 @@ package view
 			CmdSender.getInstance().createRoom( window.createPanel.nameTf.text, uint(window.createPanel.wTf.text), uint(window.createPanel.hTf.text) )
 		}
 		
-		public function doCreateRoom( width:uint, height:uint, doorPos1:Point, doorPos2:Point ):void
+		public function doCreateRoom( id:uint, width:uint, height:uint, doorPos1:Point, doorPos2:Point ):void
 		{
 			roomLayer.removeChildren();
-			room = new Room( width, height, doorPos1, doorPos2 );
+			room = new Room( id, width, height, doorPos1, doorPos2 );
 			room.x = (roomLayer.width - room.width) * 0.5
 			room.y = (roomLayer.height - room.height) * 0.5
 			roomLayer.addChild( room );
 			roomLayer.visible = true;
+		}
+		
+		public function exitRoom():void
+		{
+			roomLayer.visible = false;
 		}
 		
 		private function onSaveSetting( e:MouseEvent ):void

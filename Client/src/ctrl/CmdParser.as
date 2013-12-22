@@ -1,9 +1,9 @@
 package ctrl
 {
+	import flash.geom.Point;
+	
 	import data.RoomDataMng;
 	import data.SocketMng;
-	
-	import flash.geom.Point;
 	
 	import view.GameView;
 
@@ -16,7 +16,8 @@ package ctrl
 				"hi" : initPlayer,
 				"updateRoomList" : updateRoomList,
 				"createRoom" : createRoom,
-				"updateAllPos" : updateAllPos
+				"updateAllPos" : updateAllPos,
+				"playerExit" : playerExit
 			};
 		public function CmdParser()
 		{
@@ -53,13 +54,18 @@ package ctrl
 		
 		public function createRoom( data:Object ):void
 		{
-			GameView.getInstance().doCreateRoom( data['width'], data['height'],
+			GameView.getInstance().doCreateRoom( data['id'], data['width'], data['height'],
 				new Point(data['doorX'], data['doorY1']), new Point(data['doorX'], data['doorY2']) );
 		}
 		
 		public function updateAllPos( data:Object ):void
 		{
 			GameView.getInstance().room.updateAllPlayerPos( data );
+		}
+		
+		public function playerExit( data:Object ):void
+		{
+			GameView.getInstance().room.onPlayerExit( data );
 		}
 		
 	}

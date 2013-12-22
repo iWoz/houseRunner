@@ -1,9 +1,5 @@
 package view
 {
-	import ctrl.CmdSender;
-	
-	import data.SocketMng;
-	
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.KeyboardEvent;
@@ -11,14 +7,21 @@ package view
 	import flash.geom.Point;
 	import flash.ui.Keyboard;
 	
+	import ctrl.CmdSender;
+	
+	import data.SocketMng;
+	
 	public class Room extends Sprite
 	{
+		private var id:uint;
 		private var frame:Sprite;
 		private var players:Object;
 		
-		public function Room( width:uint, height:uint, doorPos1:Point, doorPos2:Point )
+		public function Room( id:uint, width:uint, height:uint, doorPos1:Point, doorPos2:Point )
 		{
 			super();
+			this.id = id;
+			
 			frame = new Sprite;
 			frame.graphics.lineStyle( 1, 0xff0000 );
 			frame.graphics.beginFill( 0xcccccc );
@@ -51,6 +54,8 @@ package view
 			{
 				case Keyboard.ESCAPE:
 					trace( "on esc" );
+					CmdSender.getInstance().exitRoom( this.id );
+					GameView.getInstance().exitRoom();
 					break;
 				case Keyboard.UP:
 					CmdSender.getInstance().move( self.x, self.y - delta );
@@ -101,6 +106,16 @@ package view
 			r.graphics.drawCircle( 0, 0, 3 );
 			r.graphics.endFill();
 			return r;
+		}
+		
+		public function onPlayerExit( data:Object ):void
+		{
+			var pid:uint = data['pid'];
+			if( players.hasOwnProperty(pid) )
+			{
+				players[pid].parent.removeChild( players[pid] );
+				players[pid] = null;
+			}
 		}
 		
 	}
