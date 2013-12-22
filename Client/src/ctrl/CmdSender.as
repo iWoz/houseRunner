@@ -31,6 +31,16 @@ package ctrl
 			SocketMng.getInstance().sendPacket( packet );
 		}
 		
+		public function joinRoom( roomId:uint ):void
+		{
+			var param:Object = {};
+			param["rid"] = roomId;
+			param["pid"] = SocketMng.getInstance().id;
+			
+			var packet:Packet = new Packet( "joinRoom", param );
+			SocketMng.getInstance().sendPacket( packet );
+		}
+		
 		public function move( x:uint, y:uint ):void
 		{
 			var param:Object = {};

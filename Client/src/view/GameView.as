@@ -1,10 +1,5 @@
 package view
 {
-	import flash.display.Sprite;
-	import flash.display.Stage;
-	import flash.events.MouseEvent;
-	import flash.geom.Point;
-	
 	import ctrl.CmdSender;
 	
 	import data.RoomData;
@@ -12,6 +7,12 @@ package view
 	import data.SocketMng;
 	
 	import fl.controls.Button;
+	import fl.events.ListEvent;
+	
+	import flash.display.Sprite;
+	import flash.display.Stage;
+	import flash.events.MouseEvent;
+	import flash.geom.Point;
 
 	public class GameView
 	{
@@ -94,6 +95,11 @@ package view
 			window.setPanel.cancelBtn.addEventListener(MouseEvent.CLICK, function( e:MouseEvent ):void
 			{
 				window.setPanel.visible = false;
+			});
+			
+			window.roomList.addEventListener(ListEvent.ITEM_DOUBLE_CLICK, function( e:ListEvent ):void
+			{
+				CmdSender.getInstance().joinRoom( e.item.data.id );
 			});
 		}
 		
