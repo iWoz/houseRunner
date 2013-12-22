@@ -1,9 +1,9 @@
 package ctrl
 {
-	import flash.geom.Point;
-	
 	import data.RoomDataMng;
 	import data.SocketMng;
+	
+	import flash.geom.Point;
 	
 	import view.GameView;
 
@@ -48,6 +48,7 @@ package ctrl
 		public function updateRoomList( data:Object ):void
 		{
 			RoomDataMng.getInstance().updateRoomList( data );
+			GameView.getInstance().updateRoomList();
 		}
 		
 		public function createRoom( data:Object ):void

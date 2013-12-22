@@ -11,6 +11,7 @@ package view
 	
 	import flash.display.Sprite;
 	import flash.display.Stage;
+	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 
@@ -103,7 +104,7 @@ package view
 			});
 		}
 		
-		private function updateRoomList():void
+		public function updateRoomList():void
 		{
 			window.roomList.removeAll();
 			for each( var r:RoomData in RoomDataMng.getInstance().roomList )
@@ -114,8 +115,7 @@ package view
 		
 		private function onCreateRoom( e:MouseEvent ):void
 		{
-			trace("Create Room: ",window.createPanel.nameTf.text, 
-				"Size: ", window.createPanel.wTf.text, "x", window.createPanel.hTf.text  );
+			window.createPanel.visible = false;
 			CmdSender.getInstance().createRoom( window.createPanel.nameTf.text, uint(window.createPanel.wTf.text), uint(window.createPanel.hTf.text) )
 		}
 		
@@ -131,7 +131,10 @@ package view
 		
 		private function onSaveSetting( e:MouseEvent ):void
 		{
-			trace("Set ip: ",window.setPanel.ipTf.text, "port: ", window.setPanel.portTf.text );
+			window.setPanel.visible = false;
+			SocketMng.getInstance().ip = window.setPanel.ipTf.text;
+			SocketMng.getInstance().port = uint(window.setPanel.portTf.text);
+			SocketMng.getInstance().connect();
 		}
 		
 	}
