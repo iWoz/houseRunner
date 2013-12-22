@@ -1,13 +1,22 @@
 package ctrl
 {
+	import flash.geom.Point;
+	
+	import data.RoomDataMng;
+	import data.SocketMng;
+	
+	import view.GameView;
+
 	public class CmdParser
 	{
 		private static var inst:CmdParser;
 		
 		private const CMD_FUNC_MAP:Object = 
 			{
+				"hi" : initPlayer,
 				"updateRoomList" : updateRoomList,
-				"updateAllPos" : updateRoomList
+				"createRoom" : createRoom,
+				"updateAllPos" : updateAllPos
 			};
 		public function CmdParser()
 		{
@@ -30,9 +39,26 @@ package ctrl
 			}
 		}
 		
+		public function initPlayer( data:Object ):void
+		{
+			SocketMng.getInstance().id = data["id"];
+			trace( "init player, player id:", data["id"] );
+		}
+		
 		public function updateRoomList( data:Object ):void
 		{
-			
+			RoomDataMng.getInstance().updateRoomList( data );
+		}
+		
+		public function createRoom( data:Object ):void
+		{
+			GameView.getInstance().doCreateRoom( data['width'], data['height'],
+				new Point(data['doorX'], data['doorY1']), new Point(data['doorX'], data['doorY2']) );
+		}
+		
+		public function updateAllPos( data:Object ):void
+		{
+			GameView.getInstance().room.updateAllPlayerPos( data );
 		}
 		
 	}

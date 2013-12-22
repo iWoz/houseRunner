@@ -3,6 +3,8 @@ package
 	import flash.display.Sprite;
 	import flash.events.Event;
 	
+	import data.SocketMng;
+	
 	import view.GameView;
 	
 	public class HouseRunner extends Sprite
@@ -23,6 +25,7 @@ package
 		{
 			removeEventListener( Event.ADDED_TO_STAGE, init );
 			GameView.getInstance().init( this.stage );
+			SocketMng.getInstance().connect();
 		}
 	
 	}

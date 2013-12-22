@@ -1,7 +1,5 @@
 package data
 {
-	import ctrl.CmdParser;
-	
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.events.OutputProgressEvent;
@@ -9,13 +7,16 @@ package data
 	import flash.events.SecurityErrorEvent;
 	import flash.net.Socket;
 	import flash.utils.ByteArray;
+	
+	import ctrl.CmdParser;
 
 	public class SocketMng
 	{
 		private static var inst:SocketMng;
 		
 		public var ip:String = "192.168.3.104";
-		public var port:uint = 1234;
+		public var port:uint = 3000;
+		public var id:uint = 0;
 		
 		private var soc:Socket;
 		private var pLen:uint;
@@ -87,7 +88,7 @@ package data
 			return ba.length;
 		}
 		
-		private function sendPacket( p:Packet ):void
+		public function sendPacket( p:Packet ):void
 		{
 			var msg:String = p.toJson();
 			var msgLen:uint = getStringLengthInByte( msg, "utf-8" );
@@ -102,8 +103,10 @@ package data
 			soc.close();
 		}
 		
-		public function connect( ip:String, port:uint ):void
+		public function connect( ip:String = "", port:uint = 0 ):void
 		{
+			ip = ip ? ip : this.ip;
+			port = port ? port : this.port;
 			soc.connect( ip, port );
 		}
 		
